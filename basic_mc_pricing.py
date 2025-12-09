@@ -7,10 +7,11 @@ from datetime import date
 
 
 
-#S_0 is the current stock price, K is the strike price, T is the expiration date, r is the annualised risk free rate and sigma is 
-# the standard deviation of the stock's returns.
-def black_scholes_option_price(S_0, K, T, r, sigma, option_type = "call"):
+#This uses the Black-Scholes model and the Black-Scholes formula to analytically compute the price of an European put/call option.
+# S_0 should be the current price of the underlying stock, K is the strike price, T is the expiration date and r is the risk-free interest rate.
 
+def black_scholes_option_price(S_0, K, T, r, sigma, option_type = "call"):
+    
     d_plus = (np.log(S_0 / K) + (r + 0.5 * sigma**2) * T) / (sigma * np.sqrt(T))
 
     d_minus = d_plus - sigma  * np.sqrt(T)
@@ -19,12 +20,12 @@ def black_scholes_option_price(S_0, K, T, r, sigma, option_type = "call"):
         price = S＿0 * norm.cdf(d＿plus) - K * np.exp(-r*T) * norm.cdf(d_minus)
     elif option_type.lower() == "put":
         price = K * np.exp(-r*T) * norm.cdf(-d_minus) - S_0 * norm.cdf(-d_plus)
+        
     return price 
 
+#This function uses a Geometric Brownian motion to compute the underlying asset's price at time t=T (n_sims number of times) and using this, we compute the price of the option.
 def mc_black_scholes_option_price(S_0, K, T, r, sigma, n_sims=1000, option_type="call"):
-    """
-    Monte Carlo option pricing using GBM.
-    """
+
     Z = np.random.normal(0, 1, n_sims)
     ST = S_0 * np.exp((r - 0.5 * sigma**2) * T + sigma * np.sqrt(T) * Z)
 
@@ -50,10 +51,10 @@ returns = np.log(data / data.shift(1)).dropna()
 sigma = returns.std().item() * math.sqrt(252)#252 trading days
 print("Annualized volatility:", sigma)
 
-# 4. Current price
-S0 = data.iloc[-1].item()
-K = 13      # strike
-expiration_date = date(2026,5,14)
+
+S0 = data.iloc[-1].item() #current price
+K = 13      # strike price
+expiration_date = date(2026,5,14) #expiration date
 today = date.today()
 option_type = "put"
 T = (expiration_date - today).days / 365     
