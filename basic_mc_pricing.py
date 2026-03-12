@@ -41,14 +41,14 @@ def mc_black_scholes_option_price(S_0, K, T, r, sigma, n_sims=1000, option_type=
 
 
 # 1. Download historical data
-ticker = "AAL"
+ticker = "ASML"
 data = yf.download(ticker, start="2020-01-01", end=None,  auto_adjust=False)['Adj Close']
 
 # 2. Compute daily log returns
 returns = np.log(data / data.shift(1)).dropna()
 
-# 3. Estimate historical volatility (annualized)
-sigma = returns.std().item() * math.sqrt(252)#252 trading days
+# 3. Estimate historical volatility (annualized) #implement implied volatility next
+sigma = returns.std().item() * math.sqrt(252) #252 trading days
 print("Annualized volatility:", sigma)
 
 
